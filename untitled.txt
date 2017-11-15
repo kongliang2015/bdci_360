@@ -1,0 +1,42 @@
+训练分类器模型
+
+input=/home/hadoop/DataSencise/bdci2017/BDCI2017-360/data/train/train_all.tsv
+lr=0.1
+epoch=100
+dim=200
+model_name=clf_sk_v1
+vec=/home/hadoop/DataSencise/bdci2017/BDCI2017-360/model/vec_skipgram.vec
+./fasttext supervised -input $input -output $model_name -pretrainedVectors $vec -lr $lr -epoch $epoch -wordNgrams 3 -dim $dim  
+ 
+预测
+model_name=/home/hadoop/DataSencise/bdci2017/BDCI2017-360/model/clf_sk_v1.bin
+predict=/home/hadoop/DataSencise/bdci2017/BDCI2017-360/data/test/test_all.tsv
+submit=/home/hadoop/DataSencise/bdci2017/BDCI2017-360/data/test/submit_v2.txt
+./fasttext predict $model_name $predict > $submit
+
+
+# 把训练文件和测试文件结合，用于训练词向量
+#__label__NEGATIVE #
+#943948c68fb14f5c8dc8b37396c10587 #
+# 
+cut -c19- train_all.tsv > text_all.txt
+cut -c33- test_all.tsv >> text_all.txt
+
+
+#训练词向量
+[hadoop@sv04 fastText]$ input=/home/hadoop/bdci/text_all.txt 
+[hadoop@sv04 fastText]$ model=/home/hadoop/bdci/model.bin
+[hadoop@sv04 fastText]$ dim=200
+[hadoop@sv04 fastText]$ epoch=10
+[hadoop@sv04 fastText]$ word_ngrams=3
+[hadoop@sv04 fastText]$ bucket=5000000
+[hadoop@sv04 fastText]$ ./fasttext skipgram -input $input -output $model -dim $dim -epoch $epoch -word_ngrams $word_ngrams -bucket $bucket
+
+
+
+
+
+
+
+
+
